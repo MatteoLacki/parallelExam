@@ -59,7 +59,7 @@
 				\item 	Draw
 					$$ U \sim \mathcal{U}(0,1) $$	
 
-				\item 	Accept the proposal ($X_{n} := Y$) if 
+				\item 	Accept the proposal, $X_{n} := Y$, if 
 					$$ U \leq \alpha(x^{[n-1]},Y) $$
 				\item[where] $\alpha (x^{[n-1]},y) = 1 \wedge \frac{\pi(y)}{\pi(x^{[n-1]})}$ 
 			\end{enumerate}
@@ -201,7 +201,7 @@
 \section{New Strategies}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	\begin{frame}[t]\frametitle{Our choices for \textcolor{red}{Strategies}}
+	\begin{frame}[t]\frametitle{Our choices for Strategies}
 	    
 	   	\begin{columns} 
 	    	\begin{column}[t]{.5\textwidth}	
@@ -222,37 +222,117 @@
 				\begin{table}[htbp]
 					\begin{tabular}{cc}
 					\textcolor{red}{\textsc{Strategy}} & Proportional to \\ 
+					&\\
 					IV & $\Big( \frac{\pi (x_j)}{\pi( x_i )} \wedge \frac{\pi (x_i)}{\pi( x_j )} \Big)^\frac{|\beta_i - \beta_j|}{1 + \rho(x_i, x_j)}$ \\ 
 					&\\
 					V & $\frac{2}{L (L - 1)}$ \\ 
 					&\\
-					VI & $\frac{1}{L - 1} \ind{\{|i-j|=1\}}$ \\ 
+					VI & $\frac{1}{L - 1} \mathbb{I}_{\{|i-j|=1\}}$ 
 					\end{tabular}
 				\end{table}
 			\end{column}
 		\end{columns}	
+
+		\begin{itemize}
+			\item Which one is the best?
+		\end{itemize}
 	\end{frame}
 
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
+\section{Results of Simulations}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\begin{frame}[t]\frametitle{Comparison Using Kolmogorov-Smirnof Distance}
+
+		\begin{center}
+			\begin{figure}
+				\includegraphics[height=.8\textheight, keepaspectratio]{./picts/KS}
+			\end{figure}	
+		\end{center}	    
+
+	
+	\end{frame}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
+	\begin{frame}[plain]
+	    \begin{columns} 
+	    	\begin{column}[t]{.5\textwidth}	
+				\begin{figure}
+					\caption{Missing Modes}
+					\includegraphics[height=.9\textheight, keepaspectratio]{./picts/ggplotMissingModes}
+				\end{figure}	
+			\end{column}
 
+			\begin{column}[t]{.5\textwidth}			
+				\begin{figure}
+					\caption{Average Absolute Error}
+					\includegraphics[height=.9\textheight, keepaspectratio]{./picts/ggplotAverageAbsoluteError}
+				\end{figure}	
+			\end{column}
+		\end{columns}
+	
+	\end{frame}
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\begin{frame}[plain]
+	    \begin{columns} 
+	    	\begin{column}[t]{.5\textwidth}	
+				\begin{figure}
+					\caption{First Moments}
+					\includegraphics[height=.9\textheight, keepaspectratio]{./picts/firstMomentsBaragatti}
+				\end{figure}	
+			\end{column}
+
+			\begin{column}[t]{.5\textwidth}			
+				\begin{figure}
+					\caption{Second Moments}
+					\includegraphics[height=.9\textheight, keepaspectratio]{./picts/secondMomentsBaragatti}
+				\end{figure}	
+			\end{column}
+		\end{columns}	    
+		
+	
+	\end{frame}
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 \section{The Template}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Other Minor Implementations}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+	\begin{frame}[t]\frametitle{Template for Simulations}
+	    
+		\begin{figure}
+	\begin{tikzpicture}
+		[-,thick,%
+		  every node/.style={shape=rectangle,inner sep=3pt,draw,thick}]
+		\footnotesize
+		\node {Simulations}
+		  [sibling distance=4cm]
+		  child {node {Algorithms}
+		  	child {node {Metropolis-Hastings}
+		  		child {node {Parallel Tempering}	
+		  		}
+		  	}	
+		  }
+		  child {node {State Spaces}
+		    child {node {Real}
+		    	child {node {Real Tempered}
+		    	}
+		    }
+		  }
+		  child {node {Target Measures}
+		    [sibling distance=3cm]
+		    child {node {Liang}
+		    	child {node {Matteo}}
+		    }
+		    child {node {Unnormalised Densities}}
+		  };
+	\end{tikzpicture}
+	\caption{Current operational entity-relations diagram.}\label{objectStructure}
+\end{figure}
+	
+	\end{frame}
 
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,12 +340,33 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+	\begin{frame}[t]\frametitle{Plans for Future}
+	    
+	    \begin{itemize}
+	    	\item 	Reimplement the programme using \textbf{C++}
+	    	\item  	Implement Adjustments of Temperatures
+	    	\item  	Problems with multimodial distributions with different weights
+	    	\item  	Prepare an \textbf{R} package
+	    		\begin{itemize}
+	    			\item open software for scientific community
+	    		\end{itemize}
+	    \end{itemize}
+		
+	
+	\end{frame}
 
 
 
-
-
-
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Ending}
+	\begin{frame}[plain]
+	    
+	      \begin{center}
+				\begin{figure}
+					\includegraphics[height=\textheight, width=\textwidth]{./picts/bye.jpg}
+				\end{figure}
+	      \end{center}
+	\end{frame}      
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
