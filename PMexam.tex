@@ -175,12 +175,63 @@
 		\end{columns}	
 	\end{frame}
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\begin{frame}[t]\frametitle{Swaping proposals}
+	    
+		\begin{itemize}
+			\item 	Last States:   	$x \equiv x^{[n-1]} 	= \Big( x^{[n-1]}_1, \dots, x^{[n-1]}_L \Big)$
+			\item  	Proposal Kernel:   	$\mathcal{T}(x, A) \equiv \underset{i < j}{\sum} p_{ij}(x) \mathbb{I}_A (S_{ij} x)$
+			\begin{itemize}
+				\item[where] 	$S_{ij} x = (x_1, \dots, x_{i-1}, x_j, x_{i+1}, \dots, x_{j-1}, x_i, x_{j+1}, \dots, x_L)$	 
+			\end{itemize}		
+			
+			\item To assure related kernel self-adjointness
+			\begin{equation*}
+				\alpha_\text{swap}(x,\underbrace{S_{ij} x}_\text{proposal}) = \Biggl[  \Big(\frac{\pi(x_j)}{\pi(x_i)} \Big)^{\beta_i - \beta_j}  \frac{ p_{ij}(S_{ij} x )}{ p_{ij}( x ) }\Biggl] \wedge 1
+			\end{equation*}
+
+			\item[So] different distributions on swaps = \textcolor{red}{\textsc{Strategies}}
+			\item[Also] possibly state-dependent: $p_{ij} = p_{ij}(x)$
+		\end{itemize}
+	
+	\end{frame}
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{New Strategies}
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+	\begin{frame}[t]\frametitle{Our choices for \textcolor{red}{Strategies}}
+	    
+	   	\begin{columns} 
+	    	\begin{column}[t]{.5\textwidth}	
+				\begin{table}[htbp]
+					\begin{tabular}{cc}
+					\textcolor{red}{\textsc{Strategy}} & Proportional to \\ 
+					&\\
+					I &  $\frac{\pi (x_j)}{\pi( x_i )} \wedge \frac{\pi (x_i)}{\pi( x_j )}$ \\ 
+					&\\
+					II & $\frac{\pi (x_j)}{\pi( x_i )} \wedge 1$ \\ 
+					&\\
+					III & $\Big( \frac{\pi (x_j)}{\pi( x_i )} \wedge 
+								\frac{\pi (	x_i)}{\pi( x_j )} \Big)^{|\beta_i - \beta_j|}$
+					\end{tabular}
+				\end{table}
+			\end{column}
+			\begin{column}[t]{.5\textwidth}			
+				\begin{table}[htbp]
+					\begin{tabular}{cc}
+					\textcolor{red}{\textsc{Strategy}} & Proportional to \\ 
+					IV & $\Big( \frac{\pi (x_j)}{\pi( x_i )} \wedge \frac{\pi (x_i)}{\pi( x_j )} \Big)^\frac{|\beta_i - \beta_j|}{1 + \rho(x_i, x_j)}$ \\ 
+					&\\
+					V & $\frac{2}{L (L - 1)}$ \\ 
+					&\\
+					VI & $\frac{1}{L - 1} \ind{\{|i-j|=1\}}$ \\ 
+					\end{tabular}
+				\end{table}
+			\end{column}
+		\end{columns}	
+	\end{frame}
 
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
