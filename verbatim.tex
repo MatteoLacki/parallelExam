@@ -1,2 +1,93 @@
 Description
 
+Dzień dobry. Ja nazywam się Mateusz Łącki. Moim promotorem jest dr Błażej Miasojedow. Nasza praca dotyczy algorytmu Parallel Tempering. W ciągu następnego kwadransu spróbuję teraz
+
+[SLAJD 2]
+
+	po pierwsze, 	umotywować stosowanie algorytmu parallel tempering
+	po drugie, 	 	zarysować teorię stojące za owym podejściem
+	po trzecie, 	wyjaśnię, co nowego wprowadziliśmy w naszym podejściu
+	po czwarte,  	opowiem o empirycznych wynikach, uzyskanych drogą symulacji
+	po piąte, 	 	opowiem o rozwiniętym przez nas ogólnym wzorcu  przeprowadzania symulacji łańcuchów markowa
+	Kończąc zaś 	przedstawię dalsze możliwe kierunki badań oraz nasze plany rozwoju oprogramowania
+
+[SLAJD 3]
+
+Rozpocznę od przedstawienia dość istotnej ułomności algorytmu Metropolisa-Hastingsa. 
+
+Celem tego algorytmu jest wszakże wylosowanie reprezentatywnej próbki z danego rozkładu, który w naszym przypadku posiada gęstość pi. Robimy to tworząc łańcuch markowa w następujący sposób: 
+
+1. początkowy element łańcucha ustala się arbitralnie, np. losując. Następnie powtarzamy następujące kroki np. z góry określoną liczbę razy:
+
+2. mając już pewną wartość, generujemy propozycję nowego stanu. Propozycję losujemy z rozkładu, który może istotnie zależeć od ostatniego zaakceptowanego  stanu. 
+
+3. po wylosowaniu danego punktu, obliczany jest iloraz Hastingsa a następnie poprzednio uzyskana propozycja jest akceptowana z prawdopodobieństwem równym owemu ilorazowi. 
+
+[SLAJD 4]
+
+Dobór ilorazu Hastingsa nie jest arbitralny. Jego postać motywowana jest  własnościami jądra przejścia powiązanego z generowanym przez nas łańcuchem. Dowodzi się, że tak skonstruowane jądro jest operatorem samosprzężonym na odpowiedniej przestrzeni funkcji. Ta teoretyczna własność implikuje zaś zachowywanie miary z kroku na krok, które jest nam potrzebne do generowania reprezentatywnego dla danej miary ciągu punktów. 
+
+Faktycznym problemem algorytmu jest sposób w jaki zostają akceptowane propozycje nowych kroków. Procedura ta promuje bowiem akceptowanie punktów o podobnej gęstości prawdopodobieństwa. Widać więc, że w przypadku miar wielomodalnych możemy utknąć w danej modzie na bardzo długo. Wszakże gdy większość prawdopodobieństwa propozycji skupiona jest w obszarze danej mody, to trudniej będzie modę tą opuścić.  
+
+[SLAJD 5] 
+Zwróćmy uwagę na następujący przykład pochodzący z pracy Lianga i Wanga. Rozważmy mieszankę 20 rozkładów gaussowskich o średnich w kwadracie 10 na 10, o równych wagach i wariancjach. Metropolis-Hastings losowo puszczony w pewnym punkcie z tego kwadratu wygeneruje nam po 10K ruchów trajektorię podobną do następującej:
+
+[SLAJD 6]
+
+Widać więc, że algorytm puszczony nawet roztropnie długo nie zdołał odkryć istnienia większości mód. Prosze Państwa - to jest tragedia.
+
+Chcielibyśmy mieć algorytm lepiej przeszukujący przestrzeń. Zamiast majstrowania przy mierze propozycji - a jak to zrobić? Inne podejście sugeruje  wykorzystane jest w algorytmie parallel tempering. 
+
+[SLAJD 7]
+
+Ideą Parallel Temperingu jest rozpatrzenie jednocześnie kilku łańcuchów stopniowo uproszczających problem. Propozycje łańcuchów generujemy niezależnie od siebie. Każdy łańcuch o numerze od 2 do L celuje w rozkład będący coraz bardziej wygładzoną wersją oryginalnej gęstości. Wygładzenie to uzyskujemy poprzez podniesienie gęstości do potęgi mniejszej od 1. Wykładniki te zwane są odwrotnymi temperaturami. Łańcuchy o wyższych temperaturach napotykają mniejsze trudności związane z podróżowaniem pomiędzy modami oryginalnej gęstości, co można zauważyć na poglądowych rysunkach - mody zaczynają się tu zlewać. Można też zauważyć, że dla bet mniejszych od 1 ilorazy Hastingsa odpowiadające wyższym temperaturom są wyższe od tych z podstawowego łańcucha, ułatwiając bardziej rozgrzanym łańcuchom akceptacje propozycji, których zimny łańcuch nigdy nie brałby pod uwagę :D
+
+Po wylosowaniu i akceptacji bądź odrzuceniu propozycji, następuje faza losowego przemieszania propozycji.
+
+[SLAJD 8]
+
+Zwykle zamianie podlega losowo wylosowana para propozycji z poprzedniego kroku. Sposób losowania, czyli dobór prawdopodobieństw wylosowania transpozycji, nazywamy strategiami transpozycji, a w codziennym slangu - strategiami słopów. Również i w tej fazie wylosowana para traktowana jest jako wstępna propozycja a następnie odrzucana lub akceptowana zgodnie z prawdodobieństwem rówym następującemu ilorazowi Hastingsa. Postać tego ilorazu znowuż pozwala dowieść zachowywania wyjściowego rozkładu przez odpowiednie jądro.
+
+Istnieje spora dowolność w doborze strategii transpozycji. Jednym z celów naszej pracy było przetestowanie sześciu z nich.
+
+[SLAJD 9]
+
+Dobór pierwszej strategii powiązany był ideowo z innym podejściem do symulowania, rozwiniętym przez Meili Baragatti. Promujemy w nim wymianę propozycji z tych łańcuchów, w których gęstość osiąga podobne wartości.
+
+Strategia 2 łamie symetrię poprzedniej: nie promujemy w niej zamiany w sytuacji, gdy na łańcuchu o niższej temperaturze wylosowano punkt, na którym spoczywa więcej gęstości prawdopodobieństwa.
+
+Strategia 3 to rozwinięcie strategii 1, promujące dodatkowo skoki pomiędzy łańcuchami o podobnych temperaturach. 
+
+Strategia 4 to dalsze pójście za ciosem i polegające na tym, że dodatkowo promujemy punkty, które po prostu są daleko od siebie. (Wykładnik musi być mały!!!). 
+
+Strategie 5 i 6 nie zależą od poprzedniego stanu algorytmu wyróżniają się prostotą. One nie zależą od uprzednio wylosowanych punktów. Piąta strategia jest jednostajnym rozkładem na wszystkich transpozycjach; szósta zaś - jednostajnym rozkładem na sąsiadujących transpozycjach.
+
+Celem pracy było przetestowanie w empirii jakości tych strategii. Powtórzyliśmy zatem wielokrotnie symulacje dostarczające każdorazowo różnych miar jakości. Rozkłady tych miar zaprezentuję teraz.
+
+[SLAJD 10]
+
+Zgodnie z twierdzeniami ergodycznymi powinniśmy zaobserwować prawie na pewno słabą zbieżność miar empirycznych na genenerowanej trajektorii do miary wyjściowej. Tym samym naturalnym wydaje się porównianie miar z miarą referencyjną za pomocą dwuwymiarowej statystyki kołmogorowa-smirnowa. Mierzy ona maksymalne odchylenie dystrybuanty empirycznej od tej wyjściowej. Niestety wyliczanie tej statystyki jest kosztowne, a do procedury wyliczeń zakradł się pewien błąd, co skutkowało tym, że pierwsze 3 wykresy skrzypcowe obrazują rozkład tej statystyki dla 40 symulacji, zaś 3 następne dla 120 symulacji. Wewnątrz grup mamy pełną porównywalność. Pomiędzy grupami zaś na pewno możemy porównać wartości średnie z wszystkich symulacji. Obserwujemy delikatne prowadzenie w średniej strategii trzeciej. Strategia 6 zaś wypada najbardziej blado.
+
+[SLAJD 11]
+
+Inną miarą skuteczności strategii jest sprawdzenie tego, w średnio ilu symulacjach nie udało się mody w ogóle odkryć. Pomiar taki przeprowadziliśmy dla 1000 symulacji. Wylosowane punkty zostały poprzydzielane do konkretnych mód w pewien sposób zależny od ich odległości od wartości oczekiwanych rozkładów wchodzących w skład rozpatrywanej mieszanki. Z rysunku widać, że bardziej oddalone mody, czyli te w prawych rogach, zwykle bywały częściej nieodwiedzane przez wszystkie algorytmy.  Najlepiej jednak wypadła strategia 3. Widać również, że losowy wybór sąsiadujących temperatur również nie wydaje się być dobrym pomysłem, na co wskazuje duży procent nieodkrytych mód. 
+
+Średnią ilość punktów z próbki, które klasyfikujemy jako przynależne do danej mody można uznać za pewne przybliżenie wagi tej mody w mieszance. Oczywiście jest to heurystyka. Ale łatwo możemy mierzyć odchylenie tych liczb od prawdziwych wag, wynoszących 5 setnych całości prawdopodobieństwa. Wykres odległości tak uzyskanych oszacowań jest przedstawiony w prawej części slajdu. Strategie niezależne od ostatniego kroku wydają się wypadać zdecydowanie gorzej, nastomiast strategie 1 i 3 plasują się znacznie wyżej w rankingu najmniejszego błędu, prawie dla każdego obszaru powiązanego z daną modą.
+
+[SLAJD 12]
+
+Jeszcze innym sposobem pomiaru, tym razem nie heurystycznym, jest porównanie algorytmów ze względu na przybliżanie pierszych i drugich momentów prawdziwej mieszanki. Znowu uzyskaliśmy rozkłady wyników. Na nich odłożyliśmy jako duże kropki prawdziwe wartości danych statystyk. W ich środkach umieściliśmy średnie z wielu symulacji: im bliżej centrum kropki, tym lepsza strategia, co do średniej. Patrząc na te wykresy wydaje się jednakże, że różnice pomiędzy strategiami są znikome - przyjęte kryterium jest zbyt łagodne. Tylko niekiedy średnie nie są dokładnie tam, gdzie powinny. 
+
+[SLAJD 13]
+
+Ostatnie kilka chwil poświęce mniej matematycznemu problemowi. Jednym z osiągnięć naszej pracy jest bowiem stworzenie prototypu bardzo modularnego schematu dla oprogramowania przeprowadzającego jakiekolwiek symulacje oparte o generowanie Łańcucha Markowa. Osiągnięciem jest zgrabne użycie programowania obiektowego tak, żeby badacz nie musiał za każdym razem implementować na nowo podobnych części składowych swojego algorytmu. W ramach symulacji wydzieliliśmy trzy takie części składowe: algorytm, przestrzeń stanów oraz miarę docelową. Poszczególne części programu wymieniają się informacjami. O Algorytmie możemy myśleć jako o mózgu całej symulacji - jego zadaniem jest wydawanie poleceń zapisania stanów na podstawie uzyskanych od przestrzeni stanów logarytmów prawdopodobieństw: dla algorytmu zwykle nie jest bowiem istotne na jakiej przestrzeni stanów operujemy - istotne są tylko liczby związane z miarami.  Przestrzeń stanów to miejsce generowania nowych propozycji i zapisywania ich. Natomiast miara docelowa to obiekt zawierający wszystkie niezbędne informacje do ewaluacji gęstości lub funkcji prawdopodobieństwa. Wierzymy, że taka implementacja oprogramowania ułatwi nie tylko jego konserwację, ale także będzie wygodna w swobodnym rozwoju przez społeczność statystyczną. 
+
+[SLAJD 14]
+
+Na razie gotowa jest prototypowa implementacja w statystycznym języku programowania R. Planujemy reimplementację oprogramowania w C++ oraz wypuszeczenie gotowej biblioteki, zawierającej dodatkowo algorytmy dostrajające temperaturę. 
+
+Z problemów natury teoretycznej pozostaje do rozwiązania m.in. opracowanie algorytmu sprawdzającego się dobrze również dla mieszanek o różnych wagach, albowiem w takim przypadku napotkaliśmy pewne problemy. 
+
+[SLAJD 15]
+
+Przepraszam za przedłużanie i dziękuję za uwagę.
